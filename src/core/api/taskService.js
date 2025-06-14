@@ -6,7 +6,7 @@ const getToken = () => localStorage.getItem("access_token");
 export async function createTask({ board_id, column_id, title, description, due_date }) {
   try {
     const response = await axios.post(
-      `${VITE_API_URL}/tasks`,
+      `${VITE_API_URL}/studies/tasks`,
       { board_id, column_id, title, description, due_date },
       { headers: { Authorization: `Bearer ${getToken()}` } }
     );
@@ -23,7 +23,7 @@ export async function getTasks(boardId, columnId) {
 
   try {
     const response = await axios.get(
-      `${VITE_API_URL}/tasks?board_id=${boardId}&column_id=${columnId}`,
+      `${VITE_API_URL}/studies/tasks?board_id=${boardId}&column_id=${columnId}`,
       { headers: { Authorization: `Bearer ${getToken()}` } }
     );
     return response.data.tasks || [];
@@ -43,7 +43,7 @@ export async function updateTask({ board_id, column_id, old_column_id, task_id, 
     const cleanedTaskId = task_id.toString().replace('card-', '');
 
     const response = await axios.put(
-      `${VITE_API_URL}/tasks`,
+      `${VITE_API_URL}/studies/tasks`,
       { board_id: cleanedBoardId, column_id: cleanedColumnId, old_column_id: cleanedOldColumnId, task_id: cleanedTaskId, title, description, due_date },
       { headers: { Authorization: `Bearer ${getToken()}` } }
     );
@@ -59,7 +59,7 @@ export async function deleteTask({ board_id, column_id, task_id }) {
     const cleanedColumnId = column_id.toString().replace('col-', '');
     const cleanedTaskId = task_id.toString().replace('card-', '');
 
-    const response = await axios.delete(`${VITE_API_URL}/tasks`, {
+    const response = await axios.delete(`${VITE_API_URL}/studies/tasks`, {
       headers: { Authorization: `Bearer ${getToken()}` },
       data: { board_id: cleanedBoardId, column_id: cleanedColumnId, task_id: cleanedTaskId },
     });

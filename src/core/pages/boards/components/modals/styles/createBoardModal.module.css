@@ -12,49 +12,76 @@
   }
   
   .modalContent {
-    background-color: #ffffff;
-    padding: 2rem;
+    padding: 32px 32px 24px 32px;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    width: 100%;
-    max-width: 420px;
-    animation: fadeIn 0.2s ease-in-out;
+    background: #fff;
+    min-width: 350px;
+    max-width: 400px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   }
   
   .modalTitle {
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: bold;
+    margin-bottom: 24px;
     text-align: center;
-    margin-top: -0.5rem;       /* sobe um pouco o título */
-    margin-bottom: 2.5rem;     /* aumenta o espaço abaixo */
-    color: #333;
   }
   
+  .formGroup {
+    margin-bottom: 20px;
+  }
   
-  .formGroup label {
+  .label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
     display: block;
-    text-align: left;
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-    color: #444;
   }
   
-  .formGroup label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .formGroup input,
-  .formGroup textarea {
+  .input {
     width: 100%;
     padding: 10px 12px;
     font-size: 1rem;
+    border-radius: 6px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .createButton,
+  .cancelButton {
+    font-size: 1rem;
+    padding: 10px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .createButton {
+    background: #3a86ff;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .createButton:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+  }
+  
+  .cancelButton {
+    background: #e0e0e0;
+    color: #333;
+  }
+  
+  .cancelButton:hover {
+    background-color: #ccc;
   }
   
   .formGroup input:focus,
@@ -85,48 +112,6 @@
   .formGroup textarea {
     resize: vertical;
     min-height: 80px;
-  }
-  
-  .buttonGroup {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  
-  .createButton,
-  .cancelButton {
-    flex: 1;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .createButton {
-    background-color: #3a86ff;
-    color: white;
-  }
-  
-  .createButton:hover {
-    background-color: #2769d1;
-  }
-  
-  .createButton:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-  }
-  
-  .cancelButton {
-    background-color: #e0e0e0;
-    color: #333;
-  }
-  
-  .cancelButton:hover {
-    background-color: #ccc;
   }
   
   @keyframes fadeIn {

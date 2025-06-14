@@ -5,45 +5,10 @@ export async function getBoards() {
   const token = localStorage.getItem("access_token");
 
   try {
-    const boardResponse = await axios.get(`${VITE_API_URL}/boards`, {
+    const boardResponse = await axios.get(`${VITE_API_URL}/studies/boards`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-
-    const boards = boardResponse.data.boards;
-
-    const boardsWithColumns = await Promise.all(
-      boards.map(async (board) => {
-        try {
-          const colRes = await axios.get(`${VITE_API_URL}/column/${board.id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-
-          const rawColumns = colRes.data.columns || [];
-
-          const columns = rawColumns.map((col) => ({
-            id: String(col.id),
-            name: col.title, 
-            cards: [] 
-          }));
-
-          return {
-            ...board,
-            id: String(board.id),
-            name: board.title,
-            columns
-          };
-        } catch (err) {
-          return {
-            ...board,
-            id: String(board.id),
-            name: board.title,
-            columns: []
-          };
-        }
-      })
-    );
-
-    return boardsWithColumns;
+    return boardResponse.data.boards;
   } catch (error) {
     return [];
   }
@@ -55,7 +20,7 @@ export async function createBoard(title) {
 
   try {
     const response = await axios.post(
-      `${VITE_API_URL}/boards`,
+      `${VITE_API_URL}/studies/boards`,
       { title },
       {
         headers: {
@@ -87,7 +52,7 @@ export async function deleteBoard(boardId) {
   const token = localStorage.getItem("access_token");
 
   try {
-    const response = await axios.delete(`${VITE_API_URL}/boards/${boardId}`, {
+    const response = await axios.delete(`${VITE_API_URL}/studies/boards/${boardId}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -110,7 +75,7 @@ export async function updateBoard(boardId, newTitle) {
   const token = localStorage.getItem("access_token");
   try {
     const response = await axios.put(
-      `${VITE_API_URL}/boards/${boardId}`,
+      `${VITE_API_URL}/studies/boards/${boardId}`,
       { title: newTitle },
       {
         headers: {
@@ -132,5 +97,18 @@ export async function updateBoard(boardId, newTitle) {
       success: false,
       message: error.response?.data?.detail || "Erro inesperado ao atualizar quadro."
     };
+  }
+}
+
+export async function getBoardTemplates() {
+  const token = localStorage.getItem("access_token");
+  try {
+    const response = await axios.get(`${VITE_API_URL}/studies/boards/templates`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    // Retorna apenas o array de templates
+    return response.data.templates;
+  } catch {
+    return [];
   }
 }
