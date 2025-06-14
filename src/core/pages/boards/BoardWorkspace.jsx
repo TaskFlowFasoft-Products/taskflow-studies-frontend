@@ -1,3 +1,4 @@
+import ProgressBar from '../../../features/academicProgress/ProgressBar';
 import { useState, useRef, useEffect } from "react";
 import styles from "./styles/boardWorkspace.module.css";
 import { useNavigate } from "react-router-dom";
@@ -653,6 +654,13 @@ const BoardWorkspace = () => {
     return () => document.removeEventListener("mousedown", handleClickOutsideColumnMenu);
   }, [columnDropdownRef]);
 
+  // Cálculo do progresso geral do quadro
+  const columns = boards[selectedBoardIndex]?.columns || [];
+  const concluidoColumn = columns.find(col => col.title && col.title.toLowerCase() === 'concluído');
+  const totalCards = columns.reduce((acc, col) => acc + col.cards.length, 0);
+  const completedCards = concluidoColumn ? concluidoColumn.cards.length : 0;
+  const progresso = totalCards === 0 ? 0 : Math.round((completedCards / totalCards) * 100);
+
   return (
     <div className={styles.pageContainer}>
       <header className={styles.header}>
@@ -786,12 +794,18 @@ const BoardWorkspace = () => {
               <h2 className={styles.boardTitle}>
                 {boards[selectedBoardIndex]?.name}
               </h2>
+              <ProgressBar progresso={progresso} />
 
               <DragDropContext onDragEnd={handleDragEnd}>
                 <div className={styles.columnsArea}>
                   {boards[selectedBoardIndex]?.columns?.length > 0 ? (
                     <>
                       {boards[selectedBoardIndex].columns.map((column, colIndex) => {
+                     
+                        const totalCards = column.cards.length;
+                        const completedCards = column.cards.filter(card => card.status === 'concluido').length;
+                        const progresso = totalCards === 0 ? 0 : Math.round((completedCards / totalCards) * 100);
+
                         return (
                           <Droppable droppableId={column.id} key={column.id}>
                             {(provided) => (
