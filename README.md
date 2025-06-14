@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TaskFlow - Frontend
 
 Este repositório contém o código-fonte do frontend da aplicação base do sistema **TaskFlow**, uma aplicação web de gerenciamento de tarefas baseada no modelo Kanban.
@@ -30,3 +31,6 @@ cd taskflow-base-frontend
 npm install
 npm run dev
 ```
+=======
+# taskflow-studies-frontend
+>>>>>>> 366b451d2d9a0ad7bbc298fe0e4822005d47f602
