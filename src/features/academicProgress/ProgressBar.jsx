@@ -14,12 +14,12 @@ const ProgressBar = ({ progresso }) => {
       />
       <span style={{ 
         position: 'absolute', 
-        left: '50%', 
-        top: '0', 
-        width: '100%', 
-        textAlign: 'center', 
-        lineHeight: '24px', 
-        fontWeight: 'bold' 
+        right: '8px', 
+        top: '-28px', 
+        fontWeight: 'bold',
+        color: '#222',
+        background: 'transparent',
+        zIndex: 2
       }}>
         {progresso}%
       </span>
