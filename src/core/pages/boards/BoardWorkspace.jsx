@@ -209,10 +209,11 @@ const BoardWorkspace = () => {
           title: cardData.title,
           description: cardData.description,
           due_date: cardData.dueDate === '' ? null : cardData.dueDate,
+          ...(cardData.completion_image_base64 ? { completion_image_base64: cardData.completion_image_base64 } : {}),
         };
 
         await updateTask(payload);
-  
+
         const cards = board.columns[columnIndex].cards;
         const cardIndex = cards.findIndex((c) => c.id === cardData.id);
   
@@ -222,6 +223,7 @@ const BoardWorkspace = () => {
             title: cardData.title,
             description: cardData.description,
             dueDate: cardData.dueDate,
+            completion_image_base64: cardData.completion_image_base64
           };
           toast.success("Cartão atualizado com sucesso!");
         } else {
@@ -361,20 +363,16 @@ const BoardWorkspace = () => {
     if (sourceColId !== destColId) {
       try {
         const cardId = Number(movedCard.id.replace('card-', ''));
-        const oldColumnIdToSend = Number(source.droppableId.replace('col-', ''));
 
         await updateTask({
           board_id: Number(board.id),
           task_id: cardId,
-          old_column_id: oldColumnIdToSend,
           column_id: Number(destColId), 
           title: movedCard.title ?? '',
           description: movedCard.description ?? '',
           due_date: movedCard.dueDate ?? null,
         });
       } catch (error) {
-        const errorMessage = error.response?.data?.detail || 'Erro desconhecido ao mover o card.';
-        toast.error(`Não foi possível mover o card: ${errorMessage}`);
         const revertedBoards = structuredClone(boards);
         setBoards(revertedBoards);
       }
@@ -465,7 +463,7 @@ const BoardWorkspace = () => {
     try {
       const token = localStorage.getItem("access_token");
       await axios.post(
-        `${VITE_API_URL}/boards`,
+        `${VITE_API_URL}/studies/boards`,
         { id: Number(id) },
         {
           headers: {
@@ -643,7 +641,9 @@ const BoardWorkspace = () => {
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             onClick={() => {
-                                              setCardToEdit({ ...card, columnIndex: colIndex });
+                                              const colTitle = boards[selectedBoardIndex]?.columns?.[colIndex]?.title?.toLowerCase() || '';
+                                              const isInFinalColumn = ['concluído', 'entregue'].includes(colTitle);
+                                              setCardToEdit({ ...card, columnIndex: colIndex, isInFinalColumn });
                                               setShowCreateCardModal(true);
                                             }}
                                           >
@@ -709,6 +709,7 @@ const BoardWorkspace = () => {
           isEditing={!!cardToEdit}
           loading={isSavingCard}
           isDeleting={isDeletingCard}
+          isInFinalColumn={cardToEdit?.isInFinalColumn}
         />
       )}
 
