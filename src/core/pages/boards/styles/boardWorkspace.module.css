@@ -8,7 +8,7 @@
 
 .header {
   height: 60px;
-  background-color: #f0f2f5;
+  background-color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,7 +47,7 @@
 .appName {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1d1d1d;
+  color: #fff;
   margin-left: 0.4rem;
 }
 
@@ -56,7 +56,7 @@
   text-align: center;
   font-size: 1.1rem;
   font-weight: 500;
-  color: #333;
+  color: #fff;
 }
 
 .headerRight {
@@ -64,6 +64,7 @@
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
+  color: #fff;
 }
 
 /* USER MENU */
@@ -73,7 +74,7 @@
   top: 50px;
   right: 20px;
   width: 240px;
-  background: white;
+  background: #fff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   padding: 1rem;
@@ -82,16 +83,18 @@
   flex-direction: column;
   gap: 0.5rem;
   font-family: 'Inter', sans-serif;
+  color: #7c3aed;
 }
 
 .userInfo {
   display: flex;
   flex-direction: column;
+  color: #7c3aed;
 }
 
 .userDisplayName {
   font-weight: 600;
-  color: #1d1d1d;
+  color: #7c3aed;
   font-size: 0.95rem;
 }
 
@@ -149,7 +152,7 @@
 .sidebarTitle {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #3a86ff;
+  color: #7c3aed;
   margin-bottom: 0.5rem;
   text-align: left;
   padding-left: 0.2rem;
@@ -198,7 +201,7 @@
 
 .activeBoard {
   background-color: #cce0ff;
-  border: 2px solid #3a86ff;
+  border: 2px solid #7c3aed;
   font-weight: 600;
   color: #1f3b75;
 }
@@ -267,7 +270,7 @@
   padding: 0.75rem;
   font-size: 0.95rem;
   font-weight: 600;
-  background-color: #3a86ff;
+  background-color: #7c3aed;
   color: white;
   border: none;
   border-radius: 6px;
@@ -276,9 +279,9 @@
 }
 
 .addBoardBtn:hover {
-  background-color: #2f6fe3;
+  background-color: #6a25c2;
   transform: translateY(-1px);
-  box-shadow: 0 3px 6px rgba(58, 134, 255, 0.4);
+  box-shadow: 0 3px 6px rgba(124, 58, 237, 0.4);
 }
 
 .toggleContainer {
@@ -297,7 +300,7 @@
   background-color: #ffffff;
   border: 1px solid #d0d3d8;
   padding: 6px 8px;
-  color: #3a86ff;
+  color: #7c3aed;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
@@ -331,7 +334,7 @@
 .boardTitle {
   font-size: 1.8rem;
   font-weight: 600;
-  color: #3a86ff;
+  color: #7c3aed;
 }
 
 .boardView {
@@ -594,7 +597,7 @@
 .addCardBtn {
   margin-top: 12px;
   padding: 10px 12px;
-  background-color: #3a86ff;
+  background-color: #7c3aed;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -607,13 +610,13 @@
 }
 
 .addCardBtn:hover {
-  background-color: #2f6cd8;
+  background-color: #6a25c2;
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .addCardBtn:active {
-  background-color: #255bb3;
+  background-color: #5a1fa3;
   transform: scale(0.98);
 }
 

@@ -1,13 +1,13 @@
 import LoginForm from "./LoginForm";
 import styles from "./styles/styles.module.css";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logoStudies.png";
 
 const LoginPage = () => {
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginContent}>
         <div className={styles.logoSection}>
-          <img src={logo} alt="TaskFlow Logo" className={styles.logoImage} />
+          <img src={logo} alt="TaskStudies Logo" className={styles.logoImage} />
         </div>
 
         <div className={styles.divider}></div>

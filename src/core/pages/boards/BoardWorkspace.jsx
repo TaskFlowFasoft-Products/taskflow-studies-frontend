@@ -19,6 +19,7 @@ import {
   FaPlus,
   FaTrashAlt,
   FaPen,
+  FaRegClock,
 } from "react-icons/fa";
 import LogoIcon from "../../assets/Logo Icone.png";
 import { toast } from "react-toastify";
@@ -29,6 +30,7 @@ import { createTask } from "../../api/taskService";
 import { updateTask } from "../../api/taskService";
 import { deleteTask } from "../../api/taskService";
 import axios from "axios";
+
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 const BOARD_TYPE_COLUMNS = {
@@ -64,6 +66,8 @@ const BoardWorkspace = () => {
   const boardDropdownRef = useRef(null);
 
   const [loggedInUserName, setLoggedInUserName] = useState("Carregando...");
+
+  const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, text: '' });
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -111,7 +115,7 @@ const BoardWorkspace = () => {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (columnDropdownRef.current && !columnDropdownRef.current.contains(e.target)) {
-        setColumnMenu(null);
+        // setColumnMenu(null); // Remover esta linha
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -392,6 +396,7 @@ const BoardWorkspace = () => {
       cards: col.cards?.map((card) => ({
         ...card,
         id: `card-${card.id}`,
+        dueDate: typeof card.due_date === 'string' ? card.due_date : (card.dueDate || '')
       })) || [],
     }));
   
@@ -405,7 +410,24 @@ const BoardWorkspace = () => {
         cards: []
       }));
     }
-  
+
+    // Notificação de cards expirados
+    normalizedColumns.forEach(col => {
+      const isFinalColumn = ['concluído', 'entregue'].includes(col.title?.toLowerCase());
+      if (!isFinalColumn) {
+        col.cards.forEach(card => {
+          if (card.dueDate) {
+            const [year, month, day] = card.dueDate.split('-');
+            const due = new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999); // 23:59:59 do dia do prazo
+            const now = new Date();
+            if (now > due) {
+              toast.error(`Task "${card.title}" expirou o prazo`);
+            }
+          }
+        });
+      }
+    });
+
     setBoards((prevBoards) => {
       const updated = [...prevBoards];
       updated[index].columns = normalizedColumns;
@@ -443,7 +465,7 @@ const BoardWorkspace = () => {
   useEffect(() => {
     const handleClickOutsideColumnMenu = (e) => {
       if (columnDropdownRef.current && !columnDropdownRef.current.contains(e.target)) {
-        setColumnMenu(null);
+        // setColumnMenu(null); // Remover esta linha
       }
     };
     document.addEventListener("mousedown", handleClickOutsideColumnMenu);
@@ -484,6 +506,23 @@ const BoardWorkspace = () => {
     }
   };
 
+  const handleClockClick = (e, tooltipText) => {
+    e.stopPropagation();
+    setTooltip({
+      show: true,
+      x: e.clientX,
+      y: e.clientY,
+      text: tooltipText
+    });
+  };
+
+  useEffect(() => {
+    if (!tooltip.show) return;
+    const handleClick = () => setTooltip({ ...tooltip, show: false });
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [tooltip]);
+
   return (
     <div className={styles.pageContainer}>
       <header className={styles.header}>
@@ -494,11 +533,11 @@ const BoardWorkspace = () => {
           >
             <img
               src={LogoIcon}
-              alt="TaskFlow Logo"
+              alt="TaskStudies Logo"
               className={styles.logoImage}
             />
           </div>
-          <h1 className={styles.appName}>TaskFlow</h1>
+          <h1 className={styles.appName}>TaskStudies</h1>
         </div>
 
         <div className={styles.headerCenter}>
@@ -513,7 +552,9 @@ const BoardWorkspace = () => {
             onClick={() => setUserMenuOpen(!userMenuOpen)}
             style={{ cursor: "pointer" }}
           >
-            <FaUserCircle size={29} color="#3a86ff" />
+            <span style={{ background: '#fff', borderRadius: '50%', padding: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FaUserCircle size={23} color="#7c3aed" />
+            </span>
           </div>
 
           {userMenuOpen && (
@@ -616,6 +657,19 @@ const BoardWorkspace = () => {
                       const completedCards = column.cards.filter(card => card.status === 'concluido').length;
                       const progresso = totalCards === 0 ? 0 : Math.round((completedCards / totalCards) * 100);
 
+                      const isFinalColumn = ['concluído', 'entregue'].includes(column.title?.toLowerCase());
+                      let cardStatusClass = '';
+                      if (isFinalColumn) {
+                        cardStatusClass = styles.cardDone; // borda verde
+                      } else if (column.cards.length > 0 && column.cards[0].dueDate) {
+                        const [year, month, day] = column.cards[0].dueDate.split('-');
+                        const due = new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999); // 23:59:59 do dia do prazo
+                        const now = new Date();
+                        if (now > due) {
+                          cardStatusClass = styles.cardExpired; // borda vermelha
+                        }
+                      }
+
                       return (
                         <Droppable droppableId={column.id} key={column.id}>
                           {(provided) => (
@@ -636,7 +690,7 @@ const BoardWorkspace = () => {
                                       <Draggable draggableId={card.id} index={cardIndex} key={card.id}>
                                         {(provided) => (
                                           <div
-                                            className={styles.card}
+                                            className={`${styles.card} ${cardStatusClass}`}
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
@@ -647,7 +701,32 @@ const BoardWorkspace = () => {
                                               setShowCreateCardModal(true);
                                             }}
                                           >
-                                            {card.title}
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                              <span>{card.title}</span>
+                                              {!isFinalColumn && card.dueDate && (() => {
+                                                const [year, month, day] = card.dueDate.split('-');
+                                                const due = new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999); // 23:59:59 do dia do prazo
+                                                const now = new Date();
+                                                let tooltipText = '';
+                                                if (now > due) {
+                                                  tooltipText = 'Prazo expirado!';
+                                                } else {
+                                                  const diff = due - now;
+                                                  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                                  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                                                  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                                                  tooltipText = `Faltam ${String(days).padStart(2, '0')}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}min`;
+                                                }
+                                                return (
+                                                  <span
+                                                    style={{ marginLeft: 8, cursor: 'pointer', position: 'relative' }}
+                                                    onClick={e => handleClockClick(e, tooltipText)}
+                                                  >
+                                                    <FaRegClock size={16} color="#7c3aed" />
+                                                  </span>
+                                                );
+                                              })()}
+                                            </div>
                                           </div>
                                         )}
                                       </Draggable>
@@ -723,6 +802,33 @@ const BoardWorkspace = () => {
           onConfirm={confirmDeleteCard}
           loading={isDeletingCard}
         />
+      )}
+
+      {tooltip.show && (
+        <div
+          style={{
+            position: 'fixed',
+            left: tooltip.x,
+            top: tooltip.y - 60,
+            background: '#fff',
+            color: tooltip.text === 'Prazo expirado!' ? 'red' : '#222',
+            border: '1px solid #ccc',
+            borderRadius: 6,
+            padding: '8px 16px',
+            fontSize: 15,
+            fontWeight: 'bold',
+            zIndex: 9999,
+            boxShadow: '0 2px 8px #0002',
+            minWidth: 140,
+            textAlign: 'center',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
+            pointerEvents: 'auto'
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          {tooltip.text}
+        </div>
       )}
 
     </div>

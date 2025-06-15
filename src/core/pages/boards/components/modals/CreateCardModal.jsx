@@ -103,25 +103,29 @@ const CreateCardModal = ({
                     />
                     {titleError && <span className={styles.errorMessage}>{titleError}</span>}
 
-                    <label className={styles.label}>Data de entrega</label>
-                    <div style={{ position: "relative" }}>
-                        <FaRegCalendarAlt
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "10px",
-                                transform: "translateY(-50%)",
-                                color: "#666",
-                            }}
-                        />
-                        <input
-                            type="date"
-                            className={styles.input}
-                            value={dueDate}
-                            onChange={(e) => setDueDate(e.target.value)}
-                            style={{ paddingLeft: "2.2rem" }}
-                        />
-                    </div>
+                    {!isInFinalColumn && (
+                        <>
+                            <label className={styles.label}>Data de entrega</label>
+                            <div style={{ position: "relative" }}>
+                                <FaRegCalendarAlt
+                                    style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "10px",
+                                        transform: "translateY(-50%)",
+                                        color: "#666",
+                                    }}
+                                />
+                                <input
+                                    type="date"
+                                    className={styles.input}
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    style={{ paddingLeft: "2.2rem" }}
+                                />
+                            </div>
+                        </>
+                    )}
 
                     <label className={styles.label}>Descrição</label>
                     <textarea
