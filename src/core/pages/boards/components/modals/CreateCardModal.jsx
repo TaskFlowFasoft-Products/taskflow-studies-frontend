@@ -10,11 +10,15 @@ const CreateCardModal = ({
     isEditing = false,
     loading = false,
     isDeleting = false,
+    isInFinalColumn = false,
 }) => {
     const [title, setTitle] = useState(card?.title || "");
     const [dueDate, setDueDate] = useState(card?.dueDate || "");
     const [description, setDescription] = useState(card?.description || "");
     const [titleError, setTitleError] = useState("");
+    const [imageFile, setImageFile] = useState(null);
+    const [showPreview, setShowPreview] = useState(false);
+    const [savedImage, setSavedImage] = useState(card?.completion_image_base64 || null);
     const modalRef = useRef();
 
     useEffect(() => {
@@ -25,7 +29,12 @@ const CreateCardModal = ({
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    },); 
+    },);
+
+    useEffect(() => {
+        setSavedImage(card?.completion_image_base64 || null);
+        setImageFile(null); // Limpa o arquivo ao abrir novo card
+    }, [card]);
 
     const validateTitle = (value) => {
         if (!value || value.trim() === '') {
@@ -36,10 +45,22 @@ const CreateCardModal = ({
         return true;
     };
 
-    const handleSubmit = (e) => {
+    const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateTitle(title)) {
-            return;
+        if (!validateTitle(title)) return;
+
+        let completion_image_base64 = undefined;
+        if (isInFinalColumn && imageFile) {
+            completion_image_base64 = await getBase64(imageFile);
         }
 
         const cardData = {
@@ -47,6 +68,7 @@ const CreateCardModal = ({
             title: title.trim(),
             dueDate,
             description: description.trim(),
+            completion_image_base64,
         };
 
         onCreate(cardData);
@@ -108,6 +130,48 @@ const CreateCardModal = ({
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Escreva uma descrição..."
                     />
+
+                    {isInFinalColumn && (
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Anexo de imagem da atividade concluída</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className={styles.input}
+                                onChange={(e) => {
+                                    setImageFile(e.target.files[0] || null);
+                                }}
+                                disabled={!!imageFile || !!savedImage}
+                            />
+                            {(imageFile || savedImage) ? (
+                                <div className={styles.attachmentInfo} style={{ marginTop: 8, color: '#2d6a4f', fontSize: 14 }}>
+                                    <span
+                                        style={{ textDecoration: 'underline', cursor: 'pointer', color: '#2d6a4f' }}
+                                        onClick={() => setShowPreview(true)}
+                                    >
+                                        {imageFile ? imageFile.name : 'imagem_anexada.jpg'}
+                                    </span>
+                                    <span style={{ color: '#888', marginLeft: 8 }}>
+                                        (Só é possível anexar uma imagem por cartão)
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className={styles.attachmentInfo} style={{ marginTop: 8, color: '#888', fontSize: 14 }}>
+                                    Nenhum arquivo anexado
+                                </div>
+                            )}
+                            {showPreview && (imageFile || savedImage) && (
+                                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowPreview(false)}>
+                                    <img
+                                        src={imageFile ? URL.createObjectURL(imageFile) : savedImage}
+                                        alt="Preview"
+                                        className={styles.previewImage}
+                                        style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: 8, boxShadow: '0 2px 16px #0008' }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <div className={styles.buttonGroup}>
                         {isEditing ? (

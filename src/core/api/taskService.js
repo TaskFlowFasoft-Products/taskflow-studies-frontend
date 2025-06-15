@@ -35,22 +35,17 @@ export async function getTasks(boardId, columnId) {
   }
 }
 
-export async function updateTask({ board_id, column_id, old_column_id, task_id, title, description, due_date }) {
-  try {
-    const cleanedBoardId = board_id.toString().replace('col-', '');
-    const cleanedColumnId = column_id.toString().replace('col-', '');
-    const cleanedOldColumnId = old_column_id.toString().replace('col-', '');
-    const cleanedTaskId = task_id.toString().replace('card-', '');
+export async function updateTask({ board_id, column_id, task_id, title, description, due_date, completion_image_base64 }) {
+  const cleanedBoardId = board_id.toString().replace('col-', '');
+  const cleanedColumnId = column_id.toString().replace('col-', '');
+  const cleanedTaskId = task_id.toString().replace('card-', '');
 
-    const response = await axios.put(
-      `${VITE_API_URL}/studies/tasks`,
-      { board_id: cleanedBoardId, column_id: cleanedColumnId, old_column_id: cleanedOldColumnId, task_id: cleanedTaskId, title, description, due_date },
-      { headers: { Authorization: `Bearer ${getToken()}` } }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axios.put(
+    `${VITE_API_URL}/studies/tasks`,
+    { board_id: cleanedBoardId, column_id: cleanedColumnId, task_id: cleanedTaskId, title, description, due_date, completion_image_base64 },
+    { headers: { Authorization: `Bearer ${getToken()}` } }
+  );
+  return response.data;
 }
 
 export async function deleteTask({ board_id, column_id, task_id }) {

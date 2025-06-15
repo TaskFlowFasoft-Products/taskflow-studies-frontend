@@ -74,6 +74,7 @@ export async function deleteBoard(boardId) {
 export async function updateBoard(boardId, newTitle) {
   const token = localStorage.getItem("access_token");
   try {
+  
     const response = await axios.put(
       `${VITE_API_URL}/studies/boards/${boardId}`,
       { title: newTitle },
@@ -83,7 +84,7 @@ export async function updateBoard(boardId, newTitle) {
         }
       }
     );
-
+ 
     if (response.status === 200 && response.data.success) {
       return { success: true };
     } else {
