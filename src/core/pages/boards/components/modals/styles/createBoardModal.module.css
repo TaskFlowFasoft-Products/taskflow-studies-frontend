@@ -65,7 +65,7 @@
   }
   
   .createButton {
-    background: #3a86ff;
+    background: #7c3aed;
     color: #fff;
     font-weight: bold;
   }
@@ -87,8 +87,8 @@
   .formGroup input:focus,
   .formGroup textarea:focus {
     outline: none;
-    border-color: #3a86ff;
-    box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
   }
   
   .inputError {

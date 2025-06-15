@@ -48,7 +48,7 @@
 }
 
 .modal input:focus {
-  border-color: #3a86ff;
+  border-color: #7c3aed;
 }
 
 .inputError {
@@ -98,7 +98,7 @@
 }
 
 .confirmBtn {
-  background: #3a86ff;
+  background: #7c3aed;
   color: white;
 }
 
